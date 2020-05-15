@@ -84,6 +84,10 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 
 	globals.RecentlyChangedUsers = append(globals.RecentlyChangedUsers, globals.Users[request.UserID])
 
+	transaction.UserID = request.UserID
+
+	globals.Db.Create(&transaction)
+
 	response.Balance = transaction.BalanceAfter
 
 	_ = json.NewEncoder(w).Encode(response)

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"testTaskGuru/commons"
 	"testTaskGuru/globals"
 	"testTaskGuru/models/entities"
 	"testTaskGuru/models/requests"
@@ -27,8 +26,6 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = commons.ProcessJSON(request, &errorResponse, r)
-
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
@@ -40,13 +37,6 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 	if !isValidToken(request.Token) {
 		errorResponse.Error = "The token is invalid!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
-		return
-	}
-
-	//err := commons.ProcessJSON(request, &errorResponse, r)
-
-	if err != nil {
-		_ = json.NewEncoder(w).Encode(errorResponse.Error)
 		return
 	}
 

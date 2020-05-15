@@ -7,17 +7,18 @@ import (
 	"time"
 )
 
+
+// ?TODO Add cache loading for deposits and transactions
 func main() {
 	globals.InitApp()
-	go applyChangesToDB(10000 * time.Millisecond, globals.UpdateDatabase)
+	go triggerEveryTimePeriod(10000 * time.Millisecond, globals.UpdateDatabase)
 	router := routes.NewRouter()
 	http.ListenAndServe(":8080", router)
 	defer globals.Db.Close()
 
-
 }
-// ?TODO
-func applyChangesToDB(d time.Duration, f func()) {
+
+func triggerEveryTimePeriod(d time.Duration, f func()) {
 	for range time.Tick(d) {
 		f()
 	}

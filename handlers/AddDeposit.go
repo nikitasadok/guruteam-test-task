@@ -66,6 +66,10 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 	print(globals.Users[request.UserID].ID)
 	globals.RecentlyChangedUsers = append(globals.RecentlyChangedUsers, globals.Users[request.UserID])
 
+	deposit.UserID = request.UserID
+
+	globals.Db.Create(&deposit)
+
 	response.Balance = deposit.BalanceAfter
 
 	_ = json.NewEncoder(w).Encode(response)

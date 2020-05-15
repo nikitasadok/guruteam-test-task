@@ -8,16 +8,17 @@ type User struct {
 }
 
 type Statistics struct {
-	DepositCount uint64  `json:"depositCount"`
-	DepositSum   float32 `json:"depositSum"`
-	BetCount     uint64 `json:"betCount"`
-	BetSum float32 `json:"betSum"`
-	WinCount uint64 `json:"winCount"`
-	WinSum float32 `json:"winSum"`
+	DepositCount uint64
+	DepositSum   float32
+	BetCount     uint64
+	BetSum float32
+	WinCount uint64
+	WinSum float32
 }
 
 type Deposit struct {
-	DepositID uint64
+	UserID uint64
+	DepositID uint64 `gorm:"primary_key"`
 	Amount float32
 	BalanceBefore float32
 	BalanceAfter float32
@@ -25,7 +26,8 @@ type Deposit struct {
 }
 
 type Transaction struct {
-	TransactionID uint64
+	UserID uint64
+	TransactionID uint64 `gorm:"primary_key"`
 	Type string
 	Amount float32
 	BalanceBefore float32
