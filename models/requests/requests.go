@@ -6,6 +6,11 @@ type AddUserRequest struct {
 	Token string `json:"token"`
 }
 
+type GetUserRequest struct {
+	ID uint64 `json:"id"`
+	Token string `json:"token"`
+}
+
 type AddDepositRequest struct {
 	UserID uint64 `json:"userId"`
 	DepositID uint64 `json:"depositId"`

@@ -12,6 +12,7 @@ import (
 
 func AddUser (w http.ResponseWriter, r *http.Request) {
 	var user entities.User
+	var errorResponse responses.ErrorResponse
 	var response responses.AddUserResponse
 	var request requests.AddUserRequest
 
@@ -20,28 +21,28 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		response.Error = "Error reading your request into byte array"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "Error reading your request into byte array"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
-		response.Error = "Error unmarshalling the body of your request into a struct"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "Error unmarshalling the body of your request into a struct"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if !isValidToken(request.Token) {
-		response.Error = "The token is invalid!"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "The token is invalid!"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if globals.Users[request.ID] != nil {
-		response.Error = "The user with this ID already exists!"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "The user with this ID already exists!"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 

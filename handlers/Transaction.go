@@ -14,6 +14,7 @@ import (
 func Transaction(w http.ResponseWriter, r *http.Request) {
 	var request requests.TransactionRequest
 	var transaction entities.Transaction
+	var errorResponse responses.ErrorResponse
 	var response responses.TransactionResponse
 
 	var err error
@@ -21,40 +22,40 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		response.Error = "Error reading your request into byte array"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "Error reading your request into byte array"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
-		response.Error = "Error unmarshalling the body of your request into a struct"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "Error unmarshalling the body of your request into a struct"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if !IsValidToken(request.Token) {
-		response.Error = "The token is invalid!"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "The token is invalid!"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if request.Type != "Win" && request.Type != "Bet" {
-		response.Error = "Cannot resolve the type of your transaction. It must be either Bet or Win"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "Cannot resolve the type of your transaction. It must be either Bet or Win"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if globals.Users[request.UserID] == nil {
-		response.Error = "There is no such user in our records"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "There is no such user in our records"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if request.Type == "Bet" && globals.Users[request.UserID].Balance < request.Amount {
-		response.Error = "You don't have enough funds to make the bet. Please add a deposit to your account"
-		_ = json.NewEncoder(w).Encode(response)
+		errorResponse.Error = "You don't have enough funds to make the bet. Please add a deposit to your account"
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
