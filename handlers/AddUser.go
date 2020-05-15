@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"testTaskGuru/commons"
 	"testTaskGuru/globals"
 	"testTaskGuru/models/entities"
 	"testTaskGuru/models/requests"
@@ -26,6 +27,8 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_ = commons.ProcessJSON(request, &errorResponse, r)
+
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
@@ -40,6 +43,13 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//err := commons.ProcessJSON(request, &errorResponse, r)
+
+	if err != nil {
+		_ = json.NewEncoder(w).Encode(errorResponse.Error)
+		return
+	}
+
 	if globals.Users[request.ID] != nil {
 		errorResponse.Error = "The user with this ID already exists!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
@@ -50,6 +60,7 @@ func AddUser (w http.ResponseWriter, r *http.Request) {
 	user.Balance = request.Balance
 
 	globals.Users[user.ID] = &user
+	globals.Db.Create(&user)
 
 	_ = json.NewEncoder(w).Encode(response)
 }

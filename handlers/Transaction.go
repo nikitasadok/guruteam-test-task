@@ -53,6 +53,12 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isTransactionIDUnique(request.TransactionID) {
+		errorResponse.Error = "The transaction with such ID already exists!"
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
 	if request.Type == "Bet" && globals.Users[request.UserID].Balance < request.Amount {
 		errorResponse.Error = "You don't have enough funds to make the bet. Please add a deposit to your account"
 		_ = json.NewEncoder(w).Encode(errorResponse)
@@ -76,7 +82,20 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 	globals.UserTransactions[request.UserID] = append(globals.UserTransactions[request.UserID], &transaction)
 	globals.Users[request.UserID].Balance = transaction.BalanceAfter
 
+	globals.RecentlyChangedUsers = append(globals.RecentlyChangedUsers, globals.Users[request.UserID])
+
 	response.Balance = transaction.BalanceAfter
 
 	_ = json.NewEncoder(w).Encode(response)
+}
+
+func isTransactionIDUnique(transactionID uint64) bool {
+	for _, transactions := range globals.UserTransactions {
+		for _, transaction := range transactions {
+			if transaction.TransactionID == transactionID{
+				return false
+			}
+		}
+	}
+	return true
 }

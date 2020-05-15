@@ -47,6 +47,12 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !isDepositeIDUnique(request.DepositID) {
+		errorResponse.Error = "The deposite with such ID already exists!"
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
 	deposit.TransferTime = time.Now()
 
 	deposit.DepositID = request.DepositID
@@ -57,6 +63,8 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 
 	globals.UserDeposits[request.UserID] = append(globals.UserDeposits[request.UserID], &deposit)
 	globals.Users[request.UserID].Balance = deposit.BalanceAfter
+	print(globals.Users[request.UserID].ID)
+	globals.RecentlyChangedUsers = append(globals.RecentlyChangedUsers, globals.Users[request.UserID])
 
 	response.Balance = deposit.BalanceAfter
 
@@ -65,4 +73,15 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 
 func IsValidToken(userToken string) bool {
 	return userToken == globals.ServerToken
+}
+
+func isDepositeIDUnique (depositID uint64) bool {
+	for _, deposits := range globals.UserDeposits {
+		for _, deposit := range deposits {
+			if deposit.DepositID == depositID {
+				return false
+			}
+		}
+	}
+	return true
 }

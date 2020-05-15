@@ -7,7 +7,7 @@ type ErrorResponse struct {
 type AddUserResponse struct {
 	Error string `json:"error"`
 }
-w
+
 type AddDepositResponse struct {
 	Error string `json:"error"`
 	Balance float32 `json:"balance,omitempty"`
