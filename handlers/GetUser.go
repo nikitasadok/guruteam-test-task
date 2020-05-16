@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"testTaskGuru/commons"
 	"testTaskGuru/globals"
 	"testTaskGuru/models/entities"
 	"testTaskGuru/models/requests"
@@ -21,6 +22,7 @@ func GetUser (w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error reading your request into byte array"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
@@ -29,18 +31,21 @@ func GetUser (w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error unmarshalling the body of your request into a struct"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
-	if !isValidToken(request.Token) {
+	if !commons.IsValidToken(request.Token) {
+		w.WriteHeader(http.StatusUnauthorized)
 		errorResponse.Error = "The token is invalid!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if globals.Users[request.ID] == nil {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "There is no such user in our records"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return

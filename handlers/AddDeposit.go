@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"testTaskGuru/commons"
 	"testTaskGuru/globals"
 	"testTaskGuru/models/entities"
 	"testTaskGuru/models/requests"
@@ -22,6 +23,7 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error reading your request into byte array"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
@@ -30,24 +32,28 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error unmarshalling the body of your request into a struct"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
-	if !IsValidToken(request.Token) {
+	if !commons.IsValidToken(request.Token) {
+		w.WriteHeader(http.StatusUnauthorized)
 		errorResponse.Error = "The token is invalid!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if globals.Users[request.UserID] == nil {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "There is no such user in our records"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if !isDepositeIDUnique(request.DepositID) {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "The deposite with such ID already exists!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
@@ -63,7 +69,6 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 
 	globals.UserDeposits[request.UserID] = append(globals.UserDeposits[request.UserID], &deposit)
 	globals.Users[request.UserID].Balance = deposit.BalanceAfter
-	print(globals.Users[request.UserID].ID)
 	globals.RecentlyChangedUsers = append(globals.RecentlyChangedUsers, globals.Users[request.UserID])
 
 	deposit.UserID = request.UserID
@@ -73,10 +78,6 @@ func AddDeposit (w http.ResponseWriter, r *http.Request) {
 	response.Balance = deposit.BalanceAfter
 
 	_ = json.NewEncoder(w).Encode(response)
-}
-
-func IsValidToken(userToken string) bool {
-	return userToken == globals.ServerToken
 }
 
 func isDepositeIDUnique (depositID uint64) bool {

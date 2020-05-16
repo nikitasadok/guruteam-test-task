@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4aeaa172-a2b5-4fdc-9f32-7a455b98afd0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/AddUser_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commons/commons.go" beforeDir="false" afterPath="$PROJECT_DIR$/commons/commons.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/globals/globals.go" beforeDir="false" afterPath="$PROJECT_DIR$/globals/globals.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/AddDeposit.go" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/AddDeposit.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/AddUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/AddUser.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/GetUser.go" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/GetUser.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/Transaction.go" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/Transaction.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/entities/entities.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/entities/entities.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,6 +73,23 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="go test testTaskGuru/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="testTaskGuru" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="testTaskGuru/tests" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.go test testTaskGuru/tests" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ServiceViewManager">
     <option name="allServicesViewState">

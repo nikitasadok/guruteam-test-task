@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"testTaskGuru/commons"
 	"testTaskGuru/globals"
 	"testTaskGuru/models/entities"
 	"testTaskGuru/models/requests"
@@ -22,6 +23,7 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error reading your request into byte array"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
@@ -30,36 +32,42 @@ func Transaction(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &request)
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Error unmarshalling the body of your request into a struct"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
-	if !IsValidToken(request.Token) {
+	if !commons.IsValidToken(request.Token) {
+		w.WriteHeader(http.StatusUnauthorized)
 		errorResponse.Error = "The token is invalid!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if request.Type != "Win" && request.Type != "Bet" {
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		errorResponse.Error = "Cannot resolve the type of your transaction. It must be either Bet or Win"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if globals.Users[request.UserID] == nil {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "There is no such user in our records"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if !isTransactionIDUnique(request.TransactionID) {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "The transaction with such ID already exists!"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
 	if request.Type == "Bet" && globals.Users[request.UserID].Balance < request.Amount {
+		w.WriteHeader(http.StatusConflict)
 		errorResponse.Error = "You don't have enough funds to make the bet. Please add a deposit to your account"
 		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
